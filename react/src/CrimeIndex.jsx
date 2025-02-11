@@ -32,6 +32,16 @@ class CrimeIndex extends Component {
             });
     }
 
+    deleteCrime = (event) => {
+        if (!window.confirm("Are you sure you want to delete this company?")) {
+            return;
+        }
+        axios
+            .delete(`/api/crime/${event.target.value}`)
+            .then((response) => this.fetchcrime())
+            .catch((error) => console.log(error));
+    };
+
     componentDidMount() {
         this.fetchCrimes();
     }
@@ -55,6 +65,9 @@ class CrimeIndex extends Component {
         return crime.map((crime) => (
             <tr key={crime.id}>
                 <td className="px-6 py-4 text-sm text-center leading-5 text-gray-900 whitespace-no-wrap">
+                    {crime.id}
+                </td>
+                <td className="px-6 py-4 text-sm text-center leading-5 text-gray-900 whitespace-no-wrap">
                     {crime.year}
                 </td>
                 <td className="px-6 py-4 text-sm text-center leading-5 text-gray-900 whitespace-no-wrap">
@@ -74,6 +87,16 @@ class CrimeIndex extends Component {
                 </td>
                 <td className="px-6 py-4 text-sm text-center leading-5 text-gray-900 whitespace-no-wrap">
                     {crime.description}
+                </td>
+                <td className="px-6 py-4 text-sm leading-5 text-gray-900 whitespace-no-wrap">
+                    <button
+                        value={crime.id}
+                        onClick={this.deleteCrime}
+                        type="button"
+                        className="bg-gray-800 hover:bg-gray-700 rounded-md text-white px-4 py-2 font-semibold ease-in-out duration-150"
+                    >
+                        Delete
+                    </button>
                 </td>
             </tr>
         ));

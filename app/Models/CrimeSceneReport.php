@@ -17,4 +17,5 @@ class CrimeSceneReport extends Model
         "street",
         "description",
     ];
+    public $timestamps = false;
 }

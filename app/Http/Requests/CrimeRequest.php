@@ -11,7 +11,7 @@ class CrimeRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return false;
+        return true;
     }
 
     /**
@@ -22,12 +22,11 @@ class CrimeRequest extends FormRequest
     public function rules(): array
     {
         return [
-            "year" => ["'required', 'string'"],
-            "month" => ["'required', 'string'"],
-            "day" => ["'required', 'string'"],
-            "street" => ["'required', 'string'"],
-            "discription" => ["'required', 'string'"],
-
+            "year" => ["required", "integer"],
+            "month" => ["required", "integer"],
+            "day" => ["required", "integer"],
+            "street" => ["required", "string"],
+            "description" => ["required", "string"],
         ];
     }
 }

@@ -15,7 +15,7 @@ class CrimeController extends Controller
      */
     public function index()
     {
-        return CrimeResource::collection(CrimeSceneReport::all());
+        return CrimeResource::collection(CrimeSceneReport::paginate(20)); // Paginate with 10 items per page
     }
 
     /**

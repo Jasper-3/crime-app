@@ -1,0 +1,115 @@
+{
+	"info": {
+		"_postman_id": "c2d023cb-9217-420e-8933-b9b1ef6744e9",
+		"name": "Crimes",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "37178416"
+	},
+	"item": [
+		{
+			"name": "All Crime",
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8000/api/crime",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8000",
+					"path": [
+						"api",
+						"crime"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Single Crime",
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8000/api/crime/3",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8000",
+					"path": [
+						"api",
+						"crime",
+						"3"
+					]
+				},
+				"description": "http://localhost:8000/api/crime/{id}"
+			},
+			"response": []
+		},
+		{
+			"name": "Delete Crime",
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "DELETE",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8000/api/crime/2",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8000",
+					"path": [
+						"api",
+						"crime",
+						"2"
+					]
+				},
+				"description": "http://localhost:8000/api/crime/{id} replace id with id of item"
+			},
+			"response": []
+		},
+		{
+			"name": "Create Crime",
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"year\": 2025,\r\n    \"month\": 12,\r\n    \"day\": 12,\r\n    \"street\": \"Test\",\r\n    \"description\": \"Burglary took place at 05:23. Two people witnessed the event.\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8000/api/crime",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8000",
+					"path": [
+						"api",
+						"crime"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}

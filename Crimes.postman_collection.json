@@ -110,6 +110,82 @@
 				}
 			},
 			"response": []
+		},
+		{
+			"name": "Edit Crime",
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n        \"year\": 2025,\r\n        \"month\": 1,\r\n        \"day\": 1,\r\n        \"street\": \"Zlatkova Street\",\r\n        \"description\": \"Burglary took place at 05:23. Two people witnessed the event.\"\r\n    }",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8000/api/crime/3",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8000",
+					"path": [
+						"api",
+						"crime",
+						"3"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Search Query Test",
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8000/api/crime/search?query=Commercial Street&year=2020&day=28&sort=decs",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8000",
+					"path": [
+						"api",
+						"crime",
+						"search"
+					],
+					"query": [
+						{
+							"key": "query",
+							"value": "Commercial Street"
+						},
+						{
+							"key": "year",
+							"value": "2020"
+						},
+						{
+							"key": "day",
+							"value": "28"
+						},
+						{
+							"key": "sort",
+							"value": "decs"
+						}
+					]
+				},
+				"description": "Removing StartFragment&sort=decs defaults to asc"
+			},
+			"response": []
 		}
 	]
 }

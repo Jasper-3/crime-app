@@ -97,4 +97,4 @@ npm run dev
 ## Additonal Postman test for Backend
 
 Need a Postman App
-Import the Crimes.post_collection loacted at the root of the crime-app in postman, make sure backend servers are running
+Import the Crimes.post_collection.json loacted at the root of the crime-app in postman, make sure backend servers are running

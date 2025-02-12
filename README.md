@@ -101,7 +101,7 @@ Import the Crimes.post_collection.json loacted at the root of the crime-app in p
 
 ## Database
 
-Connecting a new neenah.db download a new copy of the said database place inside migration folder of crime-app run migrations for session token
+Connecting a new neenah.db download a new copy of the database place inside migration folder of crime-app run migrations for session token
 
 ```
 php artisan migrate

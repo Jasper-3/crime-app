@@ -1,6 +1,8 @@
 import { Component } from "react";
 import axios from "axios";
 
+const API_URL = "http://127.0.0.1:8000/api/crime";
+
 class CrimeIndex extends Component {
     constructor(props) {
         super(props);
@@ -8,46 +10,100 @@ class CrimeIndex extends Component {
             crime: [],
             loading: true,
             error: null,
+            formData: {
+                year: "",
+                month: "",
+                day: "",
+                description: "",
+            },
+            editId: null,
         };
     }
 
-    fetchCrimes() {
-        axios
-            .get("/api/crime")
-            .then((response) => {
-                // Access the `data` key from the response
-                const crime = Array.isArray(response.data.data)
-                    ? response.data.data
-                    : [];
-                this.setState({ crime, loading: false, error: null });
-                console.log("API Response:", response.data); // Log the full response
-                console.log("Companies Data:", crime); // Log the extracted array
-            })
-            .catch((error) => {
-                console.error("Error fetching crime:", error);
-                this.setState({
-                    error: "Failed to fetch crime. Please try again later.",
-                    loading: false,
-                });
-            });
-    }
+    // Fetch all crime
+    fetchCrime = async () => {
+        try {
+            const response = await axios.get("/api/crime");
 
-    deleteCrime = (event) => {
-        if (!window.confirm("Are you sure you want to delete this company?")) {
+            // Data processing logic from the second code
+            const crime = Array.isArray(response.data.data)
+                ? response.data.data
+                : [];
+
+            // Update state with the processed data
+            this.setState({ crime, loading: false, error: null });
+
+            // Optional: Log the response and processed data for debugging
+            console.log("API Response:", response.data);
+            console.log("Processed Crime Data:", crime);
+        } catch (error) {
+            console.error("Error fetching crime:", error);
+
+            // Update state to reflect the error
+            this.setState({
+                error: "Failed to fetch crime. Please try again later.",
+                loading: false,
+            });
+        }
+    };
+
+    // Handle form input changes
+    handleInputChange = (e) => {
+        const { name, value } = e.target;
+        this.setState((prevState) => ({
+            formData: {
+                ...prevState.formData,
+                [name]: value,
+            },
+        }));
+    };
+
+    // Create or update a crime
+    handleSubmit = async (e) => {
+        e.preventDefault();
+        const { formData, editId } = this.state;
+        try {
+            if (editId) {
+                // Update existing crime
+                await axios.put(`${API_URL}/${editId}`, formData);
+            } else {
+                // Create new crime
+                await axios.post(API_URL, formData);
+            }
+            this.fetchCrime(); // Refresh the list
+            this.setState({
+                formData: { year: "", month: "", day: "", description: "" }, // Reset form
+                editId: null, // Reset edit mode
+            });
+        } catch (error) {
+            console.error("Error saving crime:", error);
+        }
+    };
+
+    // Edit a crime
+    handleEdit = (crime) => {
+        this.setState({ formData: crime, editId: crime.id });
+    };
+
+    handleCrime = async (event) => {
+        if (!window.confirm("Are you sure you want to delete this crime?")) {
             return;
         }
-        axios
-            .delete(`/api/crime/${event.target.value}`)
-            .then((response) => this.fetchcrime())
-            .catch((error) => console.log(error));
+
+        try {
+            await axios.delete(`/api/crime/${event.target.value}`);
+            this.fetchCrime(); // Assuming this.fetchCrime() is a method to refresh the crime list
+        } catch (error) {
+            console.log(error);
+        }
     };
 
     componentDidMount() {
-        this.fetchCrimes();
+        this.fetchCrime();
     }
 
-    renderCompanies() {
-        const { crime } = this.state;
+    renderCrime() {
+        const { crime, formData, editId } = this.state;
 
         if (crime.length === 0) {
             return (
@@ -91,7 +147,7 @@ class CrimeIndex extends Component {
                 <td className="px-6 py-4 text-sm leading-5 text-gray-900 whitespace-no-wrap">
                     <button
                         value={crime.id}
-                        onClick={this.deleteCrime}
+                        onClick={this.handleCrime}
                         type="button"
                         className="bg-gray-800 hover:bg-gray-700 rounded-md text-white px-4 py-2 font-semibold ease-in-out duration-150"
                     >
@@ -103,7 +159,7 @@ class CrimeIndex extends Component {
     }
 
     render() {
-        const { loading, error } = this.state;
+        const { crime, formData, editId, loading, error } = this.state;
 
         if (loading) {
             return <div className="p-6 text-center">Loading...</div>;
@@ -146,7 +202,7 @@ class CrimeIndex extends Component {
                                 </th>
                             </tr>
                         </thead>
-                        <tbody>{this.renderCompanies()}</tbody>
+                        <tbody>{this.renderCrime()}</tbody>
                     </table>
                 </div>
             </div>

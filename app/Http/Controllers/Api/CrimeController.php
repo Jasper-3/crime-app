@@ -56,10 +56,7 @@ class CrimeController extends Controller
         }
 
         // Apply sorting
-        $sortOrder = $request->input(
-            'sort',
-            'asc'
-        ); // Default to ascending order
+        $sortOrder = $request->input('sort', 'asc'); // Default to ascending order
         $query->orderBy('id', $sortOrder);
 
         // Paginate the results

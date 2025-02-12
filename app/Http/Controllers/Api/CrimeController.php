@@ -75,7 +75,16 @@ class CrimeController extends Controller
     public function index()
     {
         // return CrimeResource::collection(CrimeSceneReport::paginate(20)); // Paginate with 10 items per page
-        return CrimeResource::collection(CrimeSceneReport::all());
+        // return CrimeResource::collection(CrimeSceneReport::all());
+        $sortOder = request('sort', 'asc');
+
+        if (!in_array($sortOder, ['asc', 'desc'])) {
+            $sortDirection = 'asc';
+        }
+
+        $crimes = CrimeSceneReport::orderBy('id', $sortOder)->paginate(20);
+
+        return CrimeResource::collection($crimes);
     }
 
     /** 

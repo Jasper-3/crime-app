@@ -1,4 +1,6 @@
 import { Component } from "react";
+import { ArrowDownIcon } from "@heroicons/react/24/solid";
+import { ArrowUpIcon } from "@heroicons/react/24/solid";
 import axios from "axios";
 
 const API_URL = "/api/crime";
@@ -19,13 +21,16 @@ class CrimeIndex extends Component {
             },
             editId: null,
             search: { search: "" },
+            sort: "asc",
         };
     }
 
     // Fetch all crime
     fetchCrime = async () => {
         try {
-            const response = await axios.get(API_URL);
+            const response = await axios.get(API_URL, {
+                params: { sort: this.state.sort }, // Include sort parameter
+            });
 
             // Data processing logic from the second code
             const crime = Array.isArray(response.data.data)
@@ -71,11 +76,11 @@ class CrimeIndex extends Component {
 
     handleSearch = async (e) => {
         e.preventDefault();
-        const { search } = this.state;
+        const { search, sort } = this.state;
 
         try {
             const response = await axios.get(`${API_URL}/search?query`, {
-                params: { query: search.search },
+                params: { query: search.search, sort },
             });
 
             const crime = Array.isArray(response.data.data)
@@ -91,6 +96,26 @@ class CrimeIndex extends Component {
                 loading: false,
             });
         }
+    };
+
+    handleSort = async (e) => {
+        e.preventDefault();
+        const { sort } = this.state;
+
+        // Toggle between "asc" and "desc"
+        const newSort = sort === "asc" ? "desc" : "asc";
+
+        // Update the state with the new sorting order
+        this.setState({ sort: newSort }, () => {
+            // Refetch data after updating the state
+            if (this.state.search.search) {
+                // If there's a search term, perform a search with the new sorting order
+                this.handleSearch(e);
+            } else {
+                // Otherwise, fetch the full list with the new sorting order
+                this.fetchCrime();
+            }
+        });
     };
 
     // Create or update a crime
@@ -247,7 +272,19 @@ class CrimeIndex extends Component {
                     <table className="min-w-full divide-y divide-gray-200 border">
                         <thead>
                             <tr>
-                                <th className="px-6 py-3 bg-gray-50">
+                                <th className="px-6 flex py-3 bg-gray-50">
+                                    <button
+                                        onClick={this.handleSort}
+                                        type="button"
+                                        className="bg-gray-500 hover:bg-gray-600 rounded-md text-white px-4 py-2 font-semibold ease-in-out duration-150"
+                                    >
+                                        {" "}
+                                        {this.state.sort === "asc" ? (
+                                            <ArrowUpIcon className="size-4 text-blue-700" />
+                                        ) : (
+                                            <ArrowDownIcon className="size-4 text-blue-700" />
+                                        )}
+                                    </button>
                                     <span className="text-xs font-medium tracking-wider leading-4 text-left text-gray-500 uppercase">
                                         ID
                                     </span>

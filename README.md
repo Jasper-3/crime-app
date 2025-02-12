@@ -98,3 +98,11 @@ npm run dev
 
 Need a Postman App
 Import the Crimes.post_collection.json loacted at the root of the crime-app in postman, make sure backend servers are running
+
+## Database
+
+Connecting a new neenah.db download a new copy of the said database place inside migration folder of crime-app run migrations for session token
+
+```
+php artisan migrate
+```

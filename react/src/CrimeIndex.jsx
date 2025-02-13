@@ -131,30 +131,12 @@ class CrimeIndex extends Component {
 
         // Update the state with the new sorting order
         this.setState({ sort: newSort }, () => {
-            // Construct the params object dynamically
-            const params = { sort: newSort, filter };
+            // Check if there are any active filters or search terms
+            const hasFilters = filter.year || filter.month || filter.day;
+            const hasSearch = search.search;
 
-            // Include filter parameters if they exist
-            if (filter.year) {
-                params.year = filter.year;
-            }
-
-            if (filter.month) {
-                params.month = filter.month;
-            }
-
-            if (filter.day) {
-                params.day = filter.day;
-            }
-
-            // Include search term if it exists
-            if (search.search) {
-                params.query = search.search;
-            }
-
-            // Refetch data after updating the state
-            if (this.state.search.search) {
-                // If there's a search term, perform a search with the new sorting order and filters
+            if (hasSearch || hasFilters) {
+                // If there's a search term or filters, perform a search with the new sorting order and filters
                 this.handleSearch(e);
             } else {
                 // Otherwise, fetch the full list with the new sorting order
@@ -333,6 +315,27 @@ class CrimeIndex extends Component {
                             </option>
                         ))}
                     </select>
+                    <button
+                        type="button"
+                        onClick={() => {
+                            this.setState(
+                                {
+                                    filter: {
+                                        year: "",
+                                        month: "",
+                                        day: "",
+                                    },
+                                },
+                                () => {
+                                    // Refetch data after clearing filters
+                                    this.fetchCrime();
+                                }
+                            );
+                        }}
+                        className="bg-red-500 hover:bg-red-600 rounded-md text-white px-4 py-2 font-semibold ease-in-out duration-150"
+                    >
+                        Clear Filters
+                    </button>
                     <form onSubmit={this.handleSubmit}>
                         <input
                             type="text"

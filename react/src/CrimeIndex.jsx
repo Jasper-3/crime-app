@@ -21,6 +21,11 @@ class CrimeIndex extends Component {
             },
             editId: null,
             search: { search: "" },
+            filter: {
+                year: "",
+                month: "",
+                day: "",
+            },
             sort: "asc",
         };
     }
@@ -76,11 +81,30 @@ class CrimeIndex extends Component {
 
     handleSearch = async (e) => {
         e.preventDefault();
-        const { search, sort } = this.state;
+        const { search, filter, sort } = this.state;
+
+        // Construct the params object dynamically
+        const params = { sort };
+
+        if (search.search) {
+            params.query = search.search;
+        }
+
+        if (filter.year) {
+            params.year = filter.year;
+        }
+
+        if (filter.month) {
+            params.month = filter.month;
+        }
+
+        if (filter.day) {
+            params.day = filter.day;
+        }
 
         try {
-            const response = await axios.get(`${API_URL}/search?query`, {
-                params: { query: search.search, sort },
+            const response = await axios.get(`${API_URL}/search`, {
+                params: params, // Pass the dynamically constructed params object
             });
 
             const crime = Array.isArray(response.data.data)
@@ -100,22 +124,59 @@ class CrimeIndex extends Component {
 
     handleSort = async (e) => {
         e.preventDefault();
-        const { sort } = this.state;
+        const { sort, filter, search } = this.state;
 
         // Toggle between "asc" and "desc"
         const newSort = sort === "asc" ? "desc" : "asc";
 
         // Update the state with the new sorting order
         this.setState({ sort: newSort }, () => {
+            // Construct the params object dynamically
+            const params = { sort: newSort, filter };
+
+            // Include filter parameters if they exist
+            if (filter.year) {
+                params.year = filter.year;
+            }
+
+            if (filter.month) {
+                params.month = filter.month;
+            }
+
+            if (filter.day) {
+                params.day = filter.day;
+            }
+
+            // Include search term if it exists
+            if (search.search) {
+                params.query = search.search;
+            }
+
             // Refetch data after updating the state
             if (this.state.search.search) {
-                // If there's a search term, perform a search with the new sorting order
+                // If there's a search term, perform a search with the new sorting order and filters
                 this.handleSearch(e);
             } else {
                 // Otherwise, fetch the full list with the new sorting order
                 this.fetchCrime();
             }
         });
+    };
+
+    handleFilterChange = (e) => {
+        const { name, value } = e.target;
+        this.setState(
+            (prevState) => ({
+                filter: {
+                    ...prevState.filter,
+                    [name]: value,
+                },
+            }),
+            () => {
+                // Trigger filtering after updating the state
+                this.handleSearch(e);
+            }
+        );
     };
 
     // Create or update a crime
@@ -202,7 +263,8 @@ class CrimeIndex extends Component {
     }
 
     render() {
-        const { crime, formData, search, editId, loading, error } = this.state;
+        const { crime, formData, search, filter, editId, loading, error } =
+            this.state;
 
         if (loading) {
             return <div className="p-6 text-center">Loading...</div>;
@@ -226,6 +288,51 @@ class CrimeIndex extends Component {
                         />
                         <button type="submit">Search</button>
                     </form>
+
+                    <select
+                        name="year"
+                        value={filter.year}
+                        onChange={this.handleFilterChange}
+                    >
+                        <option value="">Select Year</option>
+                        <option value="2020">2020</option>
+                        <option value="2021">2021</option>
+                        <option value="2022">2022</option>
+                        <option value="2023">2023</option>
+                    </select>
+                    {/* Month Filter */}
+                    <select
+                        name="month"
+                        value={filter.month}
+                        onChange={this.handleFilterChange}
+                    >
+                        <option value="">Select Month</option>
+                        <option value="1">January</option>
+                        <option value="2">February</option>
+                        <option value="3">March</option>
+                        <option value="4">April</option>
+                        <option value="5">May</option>
+                        <option value="6">June</option>
+                        <option value="7">July</option>
+                        <option value="8">August</option>
+                        <option value="9">September</option>
+                        <option value="10">October</option>
+                        <option value="11">November</option>
+                        <option value="12">December</option>
+                    </select>
+                    {/* Day Filter */}
+                    <select
+                        name="day"
+                        value={filter.day}
+                        onChange={this.handleFilterChange}
+                    >
+                        <option value="">Select Day</option>
+                        {Array.from({ length: 31 }, (_, i) => (
+                            <option key={i + 1} value={i + 1}>
+                                {i + 1}
+                            </option>
+                        ))}
+                    </select>
                     <form onSubmit={this.handleSubmit}>
                         <input
                             type="text"
@@ -268,7 +375,6 @@ class CrimeIndex extends Component {
                             {editId ? "Update" : "Create"}
                         </button>
                     </form>
-
                     <table className="min-w-full divide-y divide-gray-200 border">
                         <thead>
                             <tr>
